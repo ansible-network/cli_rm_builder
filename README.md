@@ -1,4 +1,4 @@
-## Resource module builder
+## Resource Module Builder [for CLI-based modules]
 
 ### Overview
 
@@ -15,15 +15,16 @@ The resource module builder is an Ansible Collection that helps developers scaff
 
 ```
 pip install -r requirements.txt
-ansible-galaxy collection install ansible.netcommon
+ansible-galaxy collection install git+https://github.com/ansible-network/cli_rm_builder.git
 ```
+
 ```yaml
 run.yml
 ---
 - hosts: localhost
   gather_facts: yes
   roles:
-    - ansible_network.resource_module_builder.run
+    - ansible_network.cli_rm_builder.run
 ```
 
 
