@@ -1,0 +1,11 @@
+---
+authors:
+    - Ansible Network Community (ansible-network)
+dependencies:
+    "ansible.netcommon": "*"
+license_file: LICENSE
+name: cli_rm_builder
+namespace: ansible-network
+readme: README.md
+repository: https://github.com/NilashishC/resource_module_builder
+version: 0.0.1

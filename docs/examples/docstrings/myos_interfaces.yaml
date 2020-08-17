@@ -1,0 +1,70 @@
+module: myos_interfaces
+short_description: 'Manages <xxxx> attributes of <network_os> <resource>.'
+description: 'Manages <xxxx> attributes of <network_os> <resource>'
+version_added: 1.0.0
+author: Ansible Network Engineer
+notes:
+  - 'Tested against <network_os> <version>'
+options:
+  config:
+    description: The provided configuration
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        type: str
+        description: The name of the <resource>
+      some_string:
+        type: str
+        description:
+        - The some_string_01
+        choices:
+        - choice_a
+        - choice_b
+        - choice_c
+        default: choice_a
+      some_bool:
+        description:
+        - The some_bool.
+        type: bool
+      some_int:
+        description:
+        - The some_int.
+        type: int
+        version_added: '1.1'
+      some_dict:
+        type: dict
+        description:
+        - The some_dict.
+        suboptions:
+          property_01:
+            description:
+            - The property_01
+            type: str
+  state:
+    description:
+    - The state the configuration should be left in
+    type: str
+    choices:
+    - merged
+    - replaced
+    - overridden
+    - deleted
+    - gathered
+    - rendered
+    - parsed
+    default: merged
+
+
+required_if:
+- ["state", "merged", ["config",]]
+- ["state", "replaced", ["config",]]
+- ["state", "overridden", ["config",]]
+- ["state", "rendered", ["config",]]
+- ["state", "parsed", ["running_config",]]
+
+mutually_exclusive:
+ - ["config", "running_config"]
+
+supports_check_mode: True
+
