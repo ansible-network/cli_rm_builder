@@ -50,9 +50,9 @@ def main():
     """
     module = AnsibleModule(
         argument_spec={{ resource|capitalize }}Args.argument_spec,
-        mutually_exclusive={{ argspec["mutually_exclusive"]|default([]) }},
-        required_if={{ argspec["required_if"]|default([]) }},
-        supports_check_mode={{ argspec["supports_check_mode"]|default(False) }}
+        mutually_exclusive={{ module_kwargs["mutually_exclusive"]|default([]) }},
+        required_if={{ module_kwargs["required_if"]|default([]) }},
+        supports_check_mode={{ module_kwargs["supports_check_mode"]|default(False) }}
     )
 
     result = {{ resource|capitalize }}(module).execute_module()

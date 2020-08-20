@@ -12,23 +12,31 @@
     force: no
   with_items: "{{ resource_module_directories }}"
 
-- name: Build argspec from documentation
-  set_fact:
-    argspec: "{{ rm_documentation|ansible_network.cli_rm_builder.to_argspec }}"
-
 - name: Copy argspec to a temporary file to format
   copy:
-    content: "{{ argspec['argument_spec'] }}"
+    # the prepended whitespace is needed to ensure that booleans are not lowercased
+    content: " {{ (rm_documentation|ansible_network.cli_rm_builder.to_argspec)['argument_spec'] }}"
     dest: "{{ temp }}"
+  changed_when: False
+
+- name: Remove the whitespace from the argspec in temp file
+  # the preceeding whitespace added in the previous task breaks `black`
+  replace:
+    path: "{{ temp }}"
+    regexp: '^\s+'
+    replace: ''
   changed_when: False
 
 - name: Format dumped argspec using black with fixed line-length
   command: "black -l 79 {{ temp }}"
   changed_when: False
 
-- name: Load formatted argspec
+- name: Load formatted argspec and get other module kwargs
   set_fact:
+    # this _has_ to be loaded as a string to preserve black formatting
     formatted_argspec: "{{ lookup('file', '{{ temp }}')|string() }}"
+    # need to pass the rm doc through the filter once again to get the other module kwargs
+    module_kwargs: "{{ rm_documentation|ansible_network.cli_rm_builder.to_argspec }}"
 
 - name: Delete temp file
   file:
