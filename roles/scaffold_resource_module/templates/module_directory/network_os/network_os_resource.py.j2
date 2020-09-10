@@ -27,10 +27,13 @@ The module file for {{ network_os }}_{{ resource }}
 """
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 DOCUMENTATION = """
 {{ rm_documentation }}
+"""
+EXAMPLES = """
 """
 
 from ansible.module_utils.basic import AnsibleModule
@@ -50,14 +53,20 @@ def main():
     """
     module = AnsibleModule(
         argument_spec={{ resource|capitalize }}Args.argument_spec,
-        mutually_exclusive={{ module_kwargs["mutually_exclusive"]|default([]) }},
-        required_if={{ module_kwargs["required_if"]|default([]) }},
-        supports_check_mode={{ module_kwargs["supports_check_mode"]|default(False) }}
+        mutually_exclusive=[["config", "running_config"]],
+        required_if=[
+            ["state", "merged", ["config"]],
+            ["state", "replaced", ["config"]],
+            ["state", "overridden", ["config"]],
+            ["state", "rendered", ["config"]],
+            ["state", "parsed", ["running_config"]],
+        ],
+        supports_check_mode=True,
     )
 
     result = {{ resource|capitalize }}(module).execute_module()
     module.exit_json(**result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

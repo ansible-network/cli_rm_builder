@@ -4,6 +4,7 @@
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 """
@@ -24,5 +25,26 @@ class {{ resource|capitalize }}Template(NetworkTemplate):
 
     # fmt: off
     PARSERS = [
+        {
+            "name": "key_a",
+            "getval": re.compile(
+                r"""
+                ^key_a\s(?P<key_a>\S+)
+                $""", re.VERBOSE),
+            "setval": "",
+            "result": {
+            },
+            "shared": True
+        },
+        {
+            "name": "key_b",
+            "getval": re.compile(
+                r"""
+                \s+key_b\s(?P<key_b>\S+)
+                $""", re.VERBOSE),
+            "setval": "",
+            "result": {
+            },
+        },
     ]
     # fmt: on

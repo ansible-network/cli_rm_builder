@@ -35,8 +35,6 @@
   set_fact:
     # this _has_ to be loaded as a string to preserve black formatting
     formatted_argspec: "{{ lookup('file', '{{ temp }}')|string() }}"
-    # need to pass the rm doc through the filter once again to get the other module kwargs
-    module_kwargs: "{{ rm_documentation|ansible_network.cli_rm_builder.to_argspec }}"
 
 - name: Delete temp file
   file:
