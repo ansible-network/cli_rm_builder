@@ -65,8 +65,8 @@ class {{ resource|capitalize }}(ResourceModule):
         """ Generate configuration commands to send based on
             want, have and desired state.
         """
-        wantd = {}
-        haved = {}
+        wantd = {entry['name']: entry for entry in self.want}
+        haved = {entry['name']: entry for entry in self.have}
 
         # if state is merged, merge want onto have and then compare
         if self.state == "merged":

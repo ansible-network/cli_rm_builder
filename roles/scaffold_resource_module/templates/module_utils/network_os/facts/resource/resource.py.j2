@@ -63,7 +63,7 @@ class {{ resource|capitalize }}Facts(object):
 
         # parse native config using the {{ resource|capitalize }} template
         {{ resource|lower }}_parser = {{ resource|capitalize }}Template(lines=data.splitlines())
-        objs = {{ resource|lower }}_parser.parse()
+        objs = list({{ resource|lower }}_parser.parse().values())
 
         ansible_facts['ansible_network_resources'].pop('{{ resource }}', None)
 
