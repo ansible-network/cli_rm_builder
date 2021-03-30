@@ -151,7 +151,7 @@ def main():
   `from ansible_collections.<ansible_network_org>.<ansible_network_os>.plugins.module_utils.network.
   <ansible_network_os>.facts.<resource>.<resource> import (<Resource>Facts,)`
 - An entry in the global variable `FACT_RESOURCE_SUBSETS` is required in order to add it to the resource
-  subsets as <resource>=<Resource>Facts
+  subsets as `<resource>=<Resource>Facts`.
 
 **Parser Templates**
 
