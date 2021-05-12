@@ -31,6 +31,7 @@ options:
         description:
         - The some_int.
         type: int
+        aliases: ["some_int_2"] # Note: ansible-test sanity requires `aliases` to be a list.
         version_added: '1.1'
       some_dict:
         type: dict
