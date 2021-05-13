@@ -31,7 +31,7 @@
 - name: Extract EXAMPLES from example file
   set_fact:
     example_documentation: "{{ lookup('file', '{{ example }}') }}"
-  when: example is defined and example_documentation == ""
+  when: example is defined
 
 - block:
     - name: "Check if {{ network_os }}_{{ resource }} module file exists"
