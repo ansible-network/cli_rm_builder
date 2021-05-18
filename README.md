@@ -33,6 +33,7 @@ ansible-playbook -e rm_dest=<destination for modules and module utils> \
                  -e collection_org=<collection_org> \
                  -e collection_name=<collection_name> \
                  -e docstring=</path/to/docstring> \
+		 -e examples=</path/to/example>\
                  -e resource=<resource>
                  run.yml
 ```
@@ -51,6 +52,7 @@ ansible-playbook -e rm_dest=<destination for modules and module utils> \
 - `collection_name`: The name of the collection
 - `resource`: The network resource targeted by the module
 - `docstring`: The path to the file that contains docstring (in YAML)
+- `examples`: The path to the file that contains examples (in txt)
 - `network_os`: The value of network_os (defaults to `collection_name`)
 
 ### Docstrings
