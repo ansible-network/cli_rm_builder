@@ -16,7 +16,7 @@ DOCUMENTATION = """
 {{ rm_documentation }}
 """
 EXAMPLES = """
-{{ example_documentation }}
+{{ example_documentation|default("") }}
 """
 
 from ansible.module_utils.basic import AnsibleModule
