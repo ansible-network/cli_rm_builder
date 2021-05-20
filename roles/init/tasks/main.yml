@@ -24,20 +24,28 @@
     rm_documentation: "{{ lookup('file', '{{ docstring }}') }}"
   when: docstring is defined
 
+
+- name: "Check if {{ network_os }}_{{ resource }} module file exists"
+  stat:
+    path: "{{ path_to_module }}"
+  register: file_stat
+
 - name: Extract EXAMPLES from Resource Module (for existing module)
   set_fact:
     example_documentation: "{{ lookup('file', '{{ path_to_module }}')|ansible_network.cli_rm_builder.get_example }}"
+  when: file_stat.stat.exists
 
 - name: Extract EXAMPLES from example file
   set_fact:
     example_documentation: "{{ lookup('file', '{{ examples }}') }}"
   when: examples is defined
 
+- name: Extract EXAMPLES from example file
+  set_fact:
+    example_documentation: ""
+  when: examples is not defined
+
 - block:
-    - name: "Check if {{ network_os }}_{{ resource }} module file exists"
-      stat:
-        path: "{{ path_to_module }}"
-      register: file_stat
 
     - assert:
         that: file_stat.stat.exists
