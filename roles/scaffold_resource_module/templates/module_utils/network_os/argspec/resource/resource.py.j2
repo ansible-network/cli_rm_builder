@@ -31,7 +31,4 @@ class {{ resource|capitalize }}Args(object):  # pylint: disable=R0903
     """The arg spec for the {{ network_os }}_{{ resource }} module
     """
 
-    def __init__(self, **kwargs):
-        pass
-
     argument_spec = {{ formatted_argspec|indent(4, False) }}  # pylint: disable=C0301
