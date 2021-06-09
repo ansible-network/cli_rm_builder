@@ -28,6 +28,9 @@ resource_module_directories:
 - action
 - filter
 - inventory
+- cliconf
+- terminal
+
 
 # each of the files to be templated
 resource_module_templates:
@@ -60,4 +63,10 @@ resource_module_templates:
   overwrite: False
 - source: module_utils/network_os/utils/utils.py.j2
   destination: "{{ parent_directory }}/module_utils/network/{{ network_os }}/utils/utils.py"
+  overwrite: False
+- source: cliconf/network_os/network_os.py.j2
+  destination: "{{ parent_directory }}/cliconf/{{ network_os }}.py"
+  overwrite: False
+- source: terminal/network_os/network_os.py.j2
+  destination: "{{ parent_directory }}/terminal/{{ network_os }}.py"
   overwrite: False
