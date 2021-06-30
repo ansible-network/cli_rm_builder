@@ -59,6 +59,9 @@ ansible-playbook -e rm_dest=<destination for modules and module utils> \
 
 See the `docstrings` directory for an example.
 
+***Note***: Within the scaffolded module file, the keys in the `RETURN` string have `type: dict` by default.
+            These should be updated to `type: dict` if `config` key in module argspec is a list of dictionaries.
+
 ### Examples
 
 **Collection directory layout**
@@ -207,6 +210,9 @@ def main():
      - `gathered`: state of the `<resource>` in target device (as structured data) [only when `state`: `gathered`]
      - `parsed`: configuration passed through the `running_config` option as structured data [only when `state`: `parsed`]
      - `rendered`: provided configuration in the task as device native config lines [only when `state`: `rendered`]
+
+- By default, the `empty_fact_val` is set to dict (`{}`). This needs to be updated to be list (`[]`) if `config` is a list
+  of dictionaries.
 
     ***Note***: Please refer to [Network resource module states](https://docs.ansible.com/ansible/latest/network/user_guide/network_resource_modules.html#network-resource-module-states) for more information.
 
