@@ -23,7 +23,7 @@ EXAMPLES = """
 RETURN = """
 before:
   description: The configuration prior to the module execution.
-  returned: when state is I(merged), I(replaced), I(overridden) or I(deleted)
+  returned: when state is I(merged), I(replaced), I(overridden), I(deleted) or I(purged)
   type: dict
   sample: >
     This output will always be in the same format as the
@@ -37,7 +37,7 @@ after:
     module argspec.
 commands:
   description: The set of commands pushed to the remote device.
-  returned: when state is I(merged), I(replaced), I(overridden) or I(deleted)
+  returned: when state is I(merged), I(replaced), I(overridden), I(deleted) or I(purged)
   type: list
   sample:
     - sample command 1
