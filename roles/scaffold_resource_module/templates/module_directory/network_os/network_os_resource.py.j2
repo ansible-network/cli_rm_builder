@@ -23,7 +23,7 @@ EXAMPLES = """
 RETURN = """
 before:
   description: The configuration prior to the module execution.
-  returned: when state is merged, replaced, overridden or deleted
+  returned: when state is I(merged), I(replaced), I(overridden) or I(deleted)
   type: dict
   sample: >
     This output will always be in the same format as the
@@ -59,7 +59,7 @@ gathered:
     This output will always be in the same format as the
     module argspec.
 parsed:
-  description: The device native config provided in running_config option as Ansible structured data.
+  description: The device native config provided in I(running_config) option parsed into structured data as per module argspec.
   returned: when state is I(parsed)
   type: list
   sample: >
