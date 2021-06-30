@@ -15,8 +15,56 @@ __metaclass__ = type
 DOCUMENTATION = """
 {{ rm_documentation }}
 """
+
 EXAMPLES = """
 {{ example_documentation|default("") }}
+"""
+
+RETURN = """
+before:
+  description: The configuration prior to the module execution.
+  returned: when state is I(merged), I(replaced), I(overridden), I(deleted) or I(purged)
+  type: dict
+  sample: >
+    This output will always be in the same format as the
+    module argspec.
+after:
+  description: The resulting configuration after module execution.
+  returned: when changed
+  type: dict
+  sample: >
+    This output will always be in the same format as the
+    module argspec.
+commands:
+  description: The set of commands pushed to the remote device.
+  returned: when state is I(merged), I(replaced), I(overridden), I(deleted) or I(purged)
+  type: list
+  sample:
+    - sample command 1
+    - sample command 2
+    - sample command 3
+rendered:
+  description: The provided configuration in the task rendered in device-native format (offline).
+  returned: when state is I(rendered)
+  type: list
+  sample:
+    - sample command 1
+    - sample command 2
+    - sample command 3
+gathered:
+  description: Facts about the network resource gathered from the remote device as structured data.
+  returned: when state is I(gathered)
+  type: list
+  sample: >
+    This output will always be in the same format as the
+    module argspec.
+parsed:
+  description: The device native config provided in I(running_config) option parsed into structured data as per module argspec.
+  returned: when state is I(parsed)
+  type: list
+  sample: >
+    This output will always be in the same format as the
+    module argspec.
 """
 
 from ansible.module_utils.basic import AnsibleModule
