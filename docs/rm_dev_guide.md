@@ -6,7 +6,7 @@
 git clone https://github.com/ansible-network/resource_module_models.git
 ```
 
-Once the above repo is cloned, go to the desired collection and add your model there. Reach out to the Ansible Network team to get it _approved_. You'll find us at #ansible-network on `irc.libera.chat <https://libera.chat/>_` or at `ansiblenetwork.slack.com`.
+Once the above repo is cloned, go to the desired collection and add your model there. Reach out to the Ansible Network team to get it _approved_. You'll find us at `#ansible-network` on [irc.libera.chat](https://libera.chat/) or at `ansiblenetwork.slack.com`.
 
 ##### Helpful Links-
 
