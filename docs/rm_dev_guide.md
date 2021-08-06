@@ -151,9 +151,9 @@ And, You might see a couple of *\_*init*\_*.py files generated,required for Ansi
 
 ## PHASE - 1 Gathering facts from the target device
 
-The first step in building a resource module is to write facts code that converts device native configuration to structured data. This is done by comparing the device config with a set of pre-defined “Parser Templates” that define regexes to parse the native config.
+The first step in building a resource module is to write facts code that converts device native configuration to structured data. This is done by comparing the device config with a set of pre-defined “Parser Templates” that define regexs to parse the native config.
 
-Both the list of templates and the config are fed to an object of the NetworkTemplate class, on which the `parse()` method is then invoked. The output of the `parse()` method is semi-structured data that might need some additional updates to match the module’s argspec format.
+Both the list of templates and the config are fed to an object of the NetworkTemplate class, on which the `parse()` method is then invoked. The output of the `parse()` method is semi-structured data that might need some additional updates to match the module’s argspec format. ref: [prefix_lists facts](https://github.com/ansible-collections/cisco.nxos/blob/2ea1935043bc5e607fb73a2192e20055b0be9e6a/plugins/module_utils/network/nxos/facts/prefix_lists/prefix_lists.py#L44)
 
 Before finally rendering this data as facts, it is validated against the module’s argspec by the validate_config() method which fails if the data does not match the schema defined in the argspec.
 
@@ -195,36 +195,37 @@ entries until matched again. This enables the data/result of the parser to be sh
 Example parsers -
 
 ```
-vyos@vyos:~$ show configuration commands | grep syslog
-set system syslog console facility all
-set system syslog console facility local7 level 'err'
-set system syslog console facility news level 'debug'
+switch(config)# ip prefix-list AllowPrefix description allows engineering server
 ```
 
 Given the set of commands the parser _can_ look like -
-ref : [Vyos logging global model](https://github.com/ansible-network/resource_module_models/blob/master/models/vyos/logging_global/vyos_logging_global.yaml)
+ref : [prefix_list model](https://github.com/ansible-network/resource_module_models/blob/master/models/nxos/prefix_list/prefix_lists.yaml)
 
 ```
 PARSERS =[{
-            "name": "console.facilities",
+            "name": "description",
             "getval": re.compile(
                 r"""
-                ^set\ssystem\ssyslog\sconsole\sfacility
-                (\s(?P<facility>all|auth|authpriv|cron|daemon|kern|lpr|mail|mark|news|protocols|security|syslog|user|uucp|local[0-7]))?
-                (\slevel\s(?P<level>'(emerg|alert|crit|err|warning|notice|info|debug|all)'))?
+                ^(?P<afi>ip|ipv6)
+                \sprefix-list
+                \s(?P<name>\S+)
+                \sdescription\s(?P<description>.+)\s*
                 $""", re.VERBOSE),
-            "setval": tmplt_params,
-            "remval": "system syslog console facility {{ console.facilities.facility }}",
+            "setval": "{{ 'ip' if afi == 'ipv4' else afi }} prefix-list {{ name }} description {{ description }}",
             "result": {
-                "console": {
-                    "facilities": [{
-                        "facility": "{{ facility }}",
-                        "severity": "{{ level }}",
-                    }, ]
-                }
-            }
+                "{{ 'ipv4' if afi == 'ip' else 'ipv6' }}": {
+                    "afi": "{{ 'ipv4' if afi == 'ip' else 'ipv6' }}",
+                    "prefix_lists": {
+                        "{{ name }}": {
+                            "name": "{{ name }}",
+                            "description": "{{ description }}",
+                        }
+                    }
+                },
+            },
         },]
 ```
+ref : [rm_template prefix_list](https://github.com/ansible-collections/cisco.nxos/blob/main/plugins/module_utils/network/nxos/rm_templates/prefix_lists.py)
 
 Having setval ready at this point is not required, we can start off by executing our first playbook
 
@@ -276,7 +277,7 @@ Let’s talk about the different [states](https://docs.ansible.com/ansible/lates
 | {A, B, C, D} |     {}      | {A, B, C, D} |  Changed  |
 ```
 
-`REPLACED`- _rA <- replace A_
+`REPLACED`- _rA - replace A_
 
 ```
 
