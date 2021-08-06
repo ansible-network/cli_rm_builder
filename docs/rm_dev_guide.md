@@ -6,7 +6,7 @@
 git clone https://github.com/ansible-network/resource_module_models.git
 ```
 
-Once the above repo is cloned go to the desired collection and add your model there. And talk to the team to get it _approved_.
+Once the above repo is cloned, go to the desired collection and add your model there. Reach out to the Ansible Network team to get it _approved_. You'll find us at #ansible-network on `irc.libera.chat <https://libera.chat/>_` or at `ansiblenetwork.slack.com`.
 
 ##### Helpful Links-
 
@@ -19,12 +19,12 @@ Once the above repo is cloned go to the desired collection and add your model th
 At first, we would need a builder for our whole code base to get scaffolded from a tool - `cli_rm_builder`
 
 ```
-pip install ansible-base
+pip install ansible-core
 
 ansible-galaxy collection install git+https://github.com/ansible-network/cli_rm_builder.git
 ```
 
-The collection _dir_ should have the following structure, follow the Github _namespaces_ for the setup under ansible collection
+The collection _dir_ have the following structure, follow the Github _namespaces_ for the setup under ansible collection
 
 ```
 ~/../../collections
@@ -35,7 +35,6 @@ The collection _dir_ should have the following structure, follow the Github _nam
 │       │   ├── netcommon
 │       │   └── utils
 │       ├── ansible_network
-│       │   └── cli_rm_builder
 │       ├── cisco
 │       │   └── ios
 │       ├── junipernetworks
@@ -45,7 +44,7 @@ The collection _dir_ should have the following structure, follow the Github _nam
 
 ```
 
-Once the cli_rm_builder and the target collection repo is cloned in the desired location we can work on the development of our module.
+Once the cli_rm_builder is installed and the target collection repo is cloned in the desired location we can work on the development of our module.
 Using the tool to generate the base-level code with which we proceed.
 
 ```
@@ -57,11 +56,11 @@ Using the tool to generate the base-level code with which we proceed.
     - ansible_network.cli_rm_builder.run
   vars:
     docstring:
-    /../resource_module_models/models/{platform}/{{module}}/{platform}_{module_name}.yaml
-    rm_dest:/home/{user}/{S}/{A}/collections/ansible_collections/{platform}/{platform}
-    resource: {module_name}
-    collection_org: {platform}
-    collection_name: {platform}
+    /../resource_module_models/models/{network_os}/{{module}}/{network_os}_{resource}.yaml
+    rm_dest:/home/{user}/{S}/{A}/collections/ansible_collections/{network_os}/{network_os}
+    resource: {resource}
+    collection_org: {network_os}
+    collection_name: {network_os}
     ansible_connection:local
 ```
 
@@ -81,25 +80,21 @@ Post execution of the above command there should be few new files in your branch
 - Debug Ansible resource module
   - [Debugging Ansible Network Modules with VSCode](https://docs.google.com/document/d/1KtgzLG8N4cyQ35NunaxaM_Gl37gFd0LObTtq6kRlLK4/edit)
   - [Debugging modules](https://docs.ansible.com/ansible/latest/dev_guide/debugging.html)
-- Setup development environment
-  - [Setting up Virtual Environments](https://docs.google.com/document/d/1eRUDIHZ6IYEegP9Z6HrhqWeGezM4n_8Pdxe8u-2TqN8/edit#heading=h.9qznvm65fex6)
-  - [Creation Of Virtual environment & Ansible Installation](https://github.com/rohitthakur2590/ansible-dev-virtualenv)
-    []()
 
 # Introduction to RM files -
 
-Looking at the collection where the new resource module is to be created after scaffolding the boiler plate code we should see new files already added -
+Looking at the collection where the new resource module is to be created after scaffolding the boiler plate code we should see the following new files already added -
 
-`{platform}_{module_name}.py` - the entry point to the Resource Module code and the module documentation resides here. To change or update any argspec attribute during development we need to make the required change here directly in the docstring and then rerun the rm_builder_run.yml with \_docstring var commented out.
-
-```
-../collections/ansible_collections/{platform}/{platform}/plugins/modules/{platform}_{module_name}.py
-```
-
-`{module_name}.py` - under \_facts directory. The code in this file is responsible for converting native on-box configuration to Ansible structured data as per the argspec of the module by using the list of parsers defined in rm_templates/{module_name}.py.The on-box config can either be fetched from the target device or from the value set in the `running_config` key in the task when the module is run with `state: parsed`. The call to get data from the target device is often wrapped within a method. This is done to facilitate easier mocking when writing unit tests.
+`{network_os}_{resource}.py` - the entry point to the Resource Module code and the module documentation resides here. To change or update any argspec attribute during development we need to make the required change here directly in the docstring and then rerun the rm_builder_run.yml with \_docstring var commented out.
 
 ```
-../collections/ansible_collections/{platform}/{platform}/plugins/module_utils/network/{platform}/facts/{module_name}/{module_name}.py
+../collections/ansible_collections/{network_os}/{network_os}/plugins/modules/{network_os}_{resource}.py
+```
+
+`{resource}.py` - under `facts` directory. The code in this file is responsible for converting native on-box configuration to Ansible structured data as per the argspec of the module by using the list of parsers defined in rm_templates/{resource}.py.The on-box config can either be fetched from the target device or from the value set in the `running_config` key in the task when the module is run with `state: parsed`. The call to get data from the target device is often wrapped within a method. This is done to facilitate easier mocking when writing unit tests.
+
+```
+../collections/ansible_collections/{network_os}/{network_os}/plugins/module_utils/network/{network_os}/facts/{resource}/{resource}.py
 ```
 
 `facts.py` - You need to manually append the existence of your new resource module’s Facts class to the `FACTS_RESOURCE_SUBSET` dictionary in this file for facts to be generated as the call for facts is from a common instance i.e netcommon
@@ -107,7 +102,7 @@ The import -
 
 ```
 from
-ansible_collections.{platform}.{platform}.plugins.module_utils.network.{platform}.facts.{module_name}.{module_name}
+ansible_collections.{network_os}.{network_os}.plugins.module_utils.network.{network_os}.facts.{resource}.{resource}
 import (
   Logging_globalFacts,
 )
@@ -116,24 +111,24 @@ import (
 The entry under global Var -
 
 ```
-FACT_RESOURCE_SUBSETS = dict({module_name}={module_name}Facts,)
+FACT_RESOURCE_SUBSETS = dict({resource}={resource}Facts,)
 ```
 
 ```
-../collections/ansible_collections/{platform}/{platform}/plugins/module_utils/network/{platform}/facts/facts.p
+../collections/ansible_collections/{network_os}/{network_os}/plugins/module_utils/network/{network_os}/facts/facts.p
 y
 ```
 
-`logging_global.py` - The \_argspec file is the python level representation of your model. You may never need to edit it manually, change the model in the module file and cli_rm_builder should take care of updating it.
+`logging_global.py` - The `argspec` file is the python level representation of your model. You may never need to edit it manually, change the model in the module file and cli_rm_builder should take care of updating it.
 
 ```
-../collections/ansible_collections/{platform}/{platform}/plugins/module_utils/network/{platform}/argspec/{module_name}/{module_name}.py
+../collections/ansible_collections/{network_os}/{network_os}/plugins/module_utils/network/{network_os}/argspec/{resource}/{resource}.py
 ```
 
-`logging_global.py` - the \_rm_template\* is one of the most vital components of a Resource Module since the conversion of native on-box configuration to structured data and vice-versa is facilitated by the parser templates that are defined in this file. Time to spin up regex/ jinja templating skills for this file. The better they are the easier it would be to get a higher score in the module's Unit Test Coverage (UTC).
+`logging_global.py` - the `rm_template` is one of the most vital components of a Resource Module since the conversion of native on-box configuration to structured data and vice-versa is facilitated by the parser templates that are defined in this file. Time to spin up regex/ jinja templating skills for this file. The better they are the easier it would be to get a higher score in the module's Unit Test Coverage (UTC).
 
 ```
-../collections/ansible_collections/{platform}/{platform}/plugins/module_utils/network/{platform}/rm_templates/{module_name}.py
+../collections/ansible_collections/{network_os}/{network_os}/plugins/module_utils/network/{network_os}/rm_templates/{resource}.py
 ```
 
 ##### Helpful Links
@@ -145,11 +140,11 @@ y
   - [J2 Live Parser](http://jinja.quantprogramming.com/)
   - [Ansible Template Tester](https://ansible.sivel.net/test/)
 
-`Logging_global.py` - the \_config file contains all the core logic of how the execution should behave in various states. In here you get _want_ [the playbook] and _have_ [the config that came from the facts rendered]
+`Logging_global.py` - the `config` file contains all the core logic of how the execution should behave in various states. In here you get _want_ [the playbook] and _have_ [the config that came from the facts rendered]
 All the states and their comparison logic goes here.
 
 ```
-/home/sagpaul/Work/bannerNconfig/collections/ansible_collections/{platform}/{platform}/plugins/module_utils/network/{platform}/argspec/{module_name}/{module_name}.py
+/home/sagpaul/Work/bannerNconfig/collections/ansible_collections/{network_os}/{network_os}/plugins/module_utils/network/{network_os}/argspec/{resource}/{resource}.py
 ```
 
 And, You might see a couple of *\_*init*\_*.py files generated,required for Ansible tests to pass!
@@ -195,7 +190,7 @@ With parser name `'k1.k2.k3'`, the RMEngineBase will extract the value of the ne
 
 `shared`-
 (Optional) The shared key makes the parsed values available to the rest of the parser
-entries until matched again.This enables the data/result of the parser to be shared among other parsers for reuse.
+entries until matched again. This enables the data/result of the parser to be shared among other parsers for reuse.
 
 Example parsers -
 
@@ -241,7 +236,7 @@ Having setval ready at this point is not required, we can start off by executing
   tasks:
   - name: Gather logging config
     vyos.vyos.vyos_logging_global:
-    state: gathered
+      state: gathered
 ```
 
 ```
@@ -265,15 +260,11 @@ You should have a working facts code as of now! And the _gathered & parsed_ stat
 
 ##### Note
 
-If there is a _list of items_ in the generated facts, it is suggested to sort them before they are rendered, in order to to get consistent output across different Python versions. This also helps with assertions while working on Unit or IntegrationTests.
+If there is a _list of items_ in the generated facts, it is suggested to sort them before they are rendered, in order to to get consistent output across different Python versions. This also helps with assertions while working on Unit or Integration Tests.
 
 ## PHASE - 2 THE CONFIG / MERGED and other STATEs
 
 Let’s talk about the different [states](https://docs.ansible.com/ansible/latest/network/user_guide/network_resource_modules.html#network-resource-module-states)!
-
-`WANT` is basically the exact representation of the task, which is accessible in the config code.
-
-`HAVE` is the on-box config as structured data that is rendered by the facts code output is just a representation of the commands that are formed based on want/have and states
 
 `MERGED` -
 
@@ -289,32 +280,34 @@ Let’s talk about the different [states](https://docs.ansible.com/ansible/lates
 
 ```
 
-|     WANT     |     HAVE     |     Output     |   Comment   |
-| :----------: | :----------: | :------------: | :---------: |
-| {A, B, C, D} | {A, B, E, F} | {rA, rB, E, F} | Changed A,B |
+|   WANT    |     HAVE     |       Output        |    Comment    |
+| :-------: | :----------: | :-----------------: | :-----------: |
+| {A, C, D} | {A, B, E, F} | {rA, B, E, F, C, D} | Changed A,C,D |
 
 ```
 
 `OVERRIDDEN`- _nA - Negate A_
 
 ```
+
 |     WANT     |    HAVE     |        Output         |  Comment  |
 | :----------: | :---------: | :-------------------: | :-------: |
-| {A, B, C, D} |   {A,B,E}   |     {A, B, nE, D}     |  Changed  |
-|      {}      | {A,B,C,D,E} |          {}           | No change |
+| {A, B, C, D} |   {A,B,E}   |   {A, B, nE, C, D}    |  Changed  |
 | {A, B, C, D} |     {}      |     {A, B, C, D}      |  Changed  |
 | {A, B, C, D} |   {E,F,G}   | {nE,nF,nG,A, B, C, D} |  Changed  |
+
 ```
 
 `DELETED`-
 
 ```
+
 |     WANT     |    HAVE     |      Output      |  Comment  |
 | :----------: | :---------: | :--------------: | :-------: |
-| {A, B, C, D} |   {A,B,E}   |     {nA, nB}     |  Changed  |
-|      {}      | {A,B,C,D,E} | {nA,nB,nC,nD,nE} | No change |
+|      {}      | {A,B,C,D,E} | {nA,nB,nC,nD,nE} |  Changed  |
 | {A, B, C, D} |     {}      |        {}        | No Change |
 | {A, B, C, D} |   {E,F,G}   |        {}        | No Change |
+
 ```
 
 `RENDERED`- Pass in a config with the rendered state it is supposed to tell you all the set of commands that would be formed on the supplied config (without actually connecting to the target device), it is different from check mode.
@@ -330,7 +323,7 @@ Let’s talk about the different [states](https://docs.ansible.com/ansible/lates
 - Network Debug and Troubleshooting Guide
   - [Debugging network Modules](https://docs.ansible.com/ansible/latest/network/user_guide/network_debug_troubleshooting.html)
 
-## Conclusion
+## Config
 
 On the config side code, you get a lot of creative liberty to handle the _want_ and _have,_ compare them and make them work as per the states. The final set of commands that need to be executed on the target nodes are formed here, based on the _setval_ values defined within the parsers.
 Implementation of _list to dict_ on every attribute is imp on the entry point of config code before it starts getting processed on the basis of states. As the \_compare() method understands it better.
@@ -345,8 +338,10 @@ A comparison of two dictionary of dictionaries is easier and more efficient than
 With the config development in place, there are few things to keep a note of to make the code clean and reusable by the rest of the modules within the same platform,
 
 ```
-..collections/ansible_collections/{platform}/{platform}/plugins/module_
-utils/network/{platform}/utils/utils.py
+
+..collections/ansible*collections/{network_os}/{network_os}/plugins/module*
+utils/network/{network_os}/utils/utils.py
+
 ```
 
 At the above path, `utils.py` creates a set of defined methods that includes flattening the config or processing the list_to_dict operations for that platform.Adding a generic method here and making the whole module reuse that existing code adds up to the code quality.
@@ -356,10 +351,16 @@ Back to config, how the _setvals_ are picked up after the compare method is at a
 So, the compare method on comparison of two dicts refers to it by the name of the parsers and tries to match that with the defined list of parsers in the config code. Adding the parser names in namespace format helps the compare method to reduce the namespace based on the dictionary it is looking at and does the setval computation on the basis of that. There is no direct relation between the _result_ key and _setval_ key int he parsers. The data available at setvals to generate the command may or may not be aligned with the facts/results from parsers. It depends on the flattening logic written in config which molds our have and want data or better I say wantd and haved to be easily compared. Here if a dict contains
 
 ```
+
 haved = { 'key1' : { 'key2' : 100 , }}
 wanted = { 'key1' : { 'key2' : 10 , }}
+
 ```
 
 A parser named Something will do the compare and push the whole dict for being processed in setvals. Whereas a parser named Something.Anything will do the comparison on a level under Something as per the above example.
 
 Happy contribution!
+
+```
+
+```
