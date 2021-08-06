@@ -277,11 +277,6 @@ Let’s talk about the different [states](https://docs.ansible.com/ansible/lates
 
 `MERGED` -
 
-|   WANT    | HAVE  | Output |   Comment   |
-| :-------: | :---: | :----: | :---------: |
-|  Header   | Title | Title  | Here's this |
-| Paragraph | Text  |  Text  |  And more   |
-
 ```
 |     WANT     |    HAVE     |    Output    |  Comment  |
 | :----------: | :---------: | :----------: | :-------: |
