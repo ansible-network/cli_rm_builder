@@ -76,9 +76,8 @@ Post execution of the above command there should be few new files in your branch
   - [Ansible Network Resource Modules: Deep Dive on Return Values](https://www.ansible.com/blog/ansible-network-resource-modules-deep-dive-on-return-values)
   - [Developing network resource modules](https://docs.ansible.com/ansible/latest/network/dev_guide/developing_resource_modules_network.html)
   - [Getting started with Route Maps Resource Modules](https://www.ansible.com/blog/getting-started-with-route-maps-resource-modules)
-    []()
 - Debug Ansible resource module
-  - [Debugging Ansible Network Modules with VSCode](https://docs.google.com/document/d/1KtgzLG8N4cyQ35NunaxaM_Gl37gFd0LObTtq6kRlLK4/edit)
+  - [Debugging Ansible Network Modules with VSCode](https://github.com/KB-perByte/debuggingNetworkResourceModule/blob/master/README.md)
   - [Debugging modules](https://docs.ansible.com/ansible/latest/dev_guide/debugging.html)
 
 # Introduction to RM files -
