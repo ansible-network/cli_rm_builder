@@ -361,6 +361,3 @@ A parser named Something will do the compare and push the whole dict for being p
 
 Happy contribution!
 
-```
-
-```
