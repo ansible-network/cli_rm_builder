@@ -263,7 +263,7 @@ You should have a working facts code as of now! And the _gathered & parsed_ stat
 
 If there is a _list of items_ in the generated facts, it is suggested to sort them before they are rendered, in order to to get consistent output across different Python versions. This also helps with assertions while working on Unit or Integration Tests.
 
-## PHASE - 2 THE CONFIG / MERGED and other STATEs
+## PHASE - 2 THE CONFIG: MERGED and other STATEs
 
 Let’s talk about the different [states](https://docs.ansible.com/ansible/latest/network/user_guide/network_resource_modules.html#network-resource-module-states)!
 
@@ -324,17 +324,27 @@ Let’s talk about the different [states](https://docs.ansible.com/ansible/lates
 - Network Debug and Troubleshooting Guide
   - [Debugging network Modules](https://docs.ansible.com/ansible/latest/network/user_guide/network_debug_troubleshooting.html)
 
-## Config
+## Config code -
 
-On the config side code, you get a lot of creative liberty to handle the _want_ and _have,_ compare them and make them work as per the states. The final set of commands that need to be executed on the target nodes are formed here, based on the _setval_ values defined within the parsers.
-Implementation of `list_to_dict` on every attribute is imp on the entry point of config code before it starts getting processed on the basis of states. As the `compare()` method understands it better.
-A comparison of two dictionary of dictionaries is easier and more efficient than a comparison of two lists of dictionaries. Hence, to optimally leverage the RMEngineBase, it is important that we convert all lists to dicts to dicts of dicts before starting with the comparison process.
+The config side code is the place where all operational states are being handled, this file generates the final set of commands that would be pushed to the target device.
+
+At first we have the class variable `self.parsers` that should contains the list of parsers that are defined for that module, later this variable is fed to the base class compare method to compare the want and have by resolving the namespace like representation of the parsers to compare on a granular level and generate the _setvals_ on behalf of the parsers for which the comparison is done.
+
+The parsers may or may not reside under a single class variable, that depends on the complexity of module and decision of segregating the parser lists to support he main comparison code.
+
+The `execute_module()` method handles the call to the `generate_commands()` method where the actual logical comparison takes place.
+
+With the _want_ and _have,_ which represents the playbook and the facts are to be processed to be in a similar structure that can be compared. The implementation of `list_to_dict` on every attribute is imp on the entry point of config code before it starts getting processed on the basis of states. As the `compare()` method understands it better i.e a comparison of two dictionary of dictionaries is easier and more efficient than a comparison of two lists of dictionaries. Hence, to optimally leverage the RMEngineBase, it is important that we convert all lists to dicts to dicts of dicts before starting with the comparison process.
 
 ##### Example list to dict :
 
-- [cisco.nxos.route_maps](https://github.com/ansible-collections/cisco.nxos/blob/main/plugins/module_utils/network/)
+- [cisco.nxos.route_maps](https://github.com/ansible-collections/cisco.nxos/blob/main/plugins/module_utils/network/nxos/config/route_maps/route_maps.py#L190)
 - [arista.eos.bpg_global](https://github.com/ansible-collections/arista.eos/blob/main/plugins/module_utils/network/eos/config/bgp_global/bgp_global.py#L365-L396)
 - [cisco.iosxr.bgp_global](https://github.com/ansible-collections/cisco.iosxr/blob/main/plugins/module_utils/network/iosxr/config/bgp_global/bgp_global.py#L376-L407)
+
+---
+
+##### Note -
 
 With the config development in place, there are few things to keep a note of to make the code clean and reusable by the rest of the modules within the same platform,
 
@@ -345,11 +355,15 @@ utils/network/{network_os}/utils/utils.py
 
 ```
 
-At the above path, `utils.py` creates a set of defined methods that includes flattening the config or processing the list_to_dict operations for that platform.Adding a generic method here and making the whole module reuse that existing code adds up to the code quality.
-
-Back to config, how the _setvals_ are picked up after the compare method is at a point to generate the commands that are finally used to apply the necessary comparison.
+At the above path, `utils.py` creates a set of defined methods that includes flattening the config or processing the list*to_dict operations for that platform.Adding a generic method here and making the whole module reuse that existing code adds up to the code quality.
+...
+Back to config, how the \_setvals* are picked up after the compare method is at a point to generate the commands that are finally used to apply the necessary comparison.
 
 So, the compare method on comparison of two dicts refers to it by the name of the parsers and tries to match that with the defined list of parsers in the config code. Adding the parser names in namespace format helps the compare method to reduce the namespace based on the dictionary it is looking at and does the setval computation on the basis of that. There is no direct relation between the _result_ key and _setval_ key int he parsers. The data available at setvals to generate the command may or may not be aligned with the facts/results from parsers. It depends on the flattening logic written in config which molds our have and want data or better I say wantd and haved to be easily compared. Here if a dict contains
+
+##### Example compare call :
+
+- [cisco.nxos.route_maps](https://github.com/ansible-collections/cisco.nxos/blob/main/plugins/module_utils/network/nxos/config/route_maps/route_maps.py#L157)
 
 ```
 
@@ -358,6 +372,6 @@ wanted = { 'key1' : { 'key2' : 10 , }}
 
 ```
 
-A parser named `Something` will do the compare and push the whole dict for being processed in setvals. Whereas a parser named Something.Anything will do the comparison on a level under Something as per the above example.
+A parser named `key1` will do the compare and push the whole dict for being processed in _setvals_. Whereas a parser named `key1.key2` will do the comparison on a level under `key2` as per the above example.
 
 Happy contribution!
