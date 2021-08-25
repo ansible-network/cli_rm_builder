@@ -84,7 +84,7 @@ Post execution of the above command there should be few new files in your branch
 
 Looking at the collection where the new resource module is to be created after scaffolding the boiler plate code we should see the following new files already added -
 
-`{network_os}_{resource}.py` - the entry point to the Resource Module code and the module documentation resides here. To change or update any argspec attribute during development we need to make the required change here directly in the docstring and then rerun the rm_builder_run.yml with \_docstring var commented out.
+`{network_os}_{resource}.py` - the entry point to the Resource Module code and the module documentation resides here. To change or update any argspec attribute during development we need to make the required change here directly in the docstring and then rerun the `rm_builder_run.yml` with _docstring_ var commented out.
 
 ```
 ../collections/ansible_collections/{network_os}/{network_os}/plugins/modules/{network_os}_{resource}.py
@@ -224,6 +224,7 @@ PARSERS =[{
             },
         },]
 ```
+
 ref : [rm_template prefix_list](https://github.com/ansible-collections/cisco.nxos/blob/main/plugins/module_utils/network/nxos/rm_templates/prefix_lists.py)
 
 Having setval ready at this point is not required, we can start off by executing our first playbook
@@ -312,7 +313,7 @@ Let’s talk about the different [states](https://docs.ansible.com/ansible/lates
 
 `RENDERED`- Pass in a config with the rendered state it is supposed to tell you all the set of commands that would be formed on the supplied config (without actually connecting to the target device), it is different from check mode.
 
-`PARSED`- The parsed state is just opposite to the rendered state it tells you how the invocation/facts would look like when you supply the running_config/ raw config from a device.
+`PARSED`- The parsed state is just opposite to the rendered state it tells you how the invocation/facts would look like when you supply the `running_config` raw config from a device.
 
 ##### Some important links at this point-
 
@@ -326,20 +327,20 @@ Let’s talk about the different [states](https://docs.ansible.com/ansible/lates
 ## Config
 
 On the config side code, you get a lot of creative liberty to handle the _want_ and _have,_ compare them and make them work as per the states. The final set of commands that need to be executed on the target nodes are formed here, based on the _setval_ values defined within the parsers.
-Implementation of _list to dict_ on every attribute is imp on the entry point of config code before it starts getting processed on the basis of states. As the \_compare() method understands it better.
+Implementation of `list_to_dict` on every attribute is imp on the entry point of config code before it starts getting processed on the basis of states. As the `compare()` method understands it better.
 A comparison of two dictionary of dictionaries is easier and more efficient than a comparison of two lists of dictionaries. Hence, to optimally leverage the RMEngineBase, it is important that we convert all lists to dicts to dicts of dicts before starting with the comparison process.
 
 ##### Example list to dict :
 
-- nxos.route_maps [\_route_maps_list_to_dict](https://github.com/ansible-collections/cisco.nxos/blob/main/plugins/module_utils/network/)
-- eos.bpg_global [\_bgp_global_list_to_dict](https://github.com/ansible-collections/arista.eos/blob/main/plugins/module_utils/network/eos/config/bgp_global/bgp_global.py#L365-L396)
-- iosxr.bgp_global [\_bgp_list_to_dict](https://github.com/ansible-collections/cisco.iosxr/blob/main/plugins/module_utils/network/iosxr/config/bgp_global/bgp_global.py#L376-L407)
+- [cisco.nxos.route_maps](https://github.com/ansible-collections/cisco.nxos/blob/main/plugins/module_utils/network/)
+- [arista.eos.bpg_global](https://github.com/ansible-collections/arista.eos/blob/main/plugins/module_utils/network/eos/config/bgp_global/bgp_global.py#L365-L396)
+- [cisco.iosxr.bgp_global](https://github.com/ansible-collections/cisco.iosxr/blob/main/plugins/module_utils/network/iosxr/config/bgp_global/bgp_global.py#L376-L407)
 
 With the config development in place, there are few things to keep a note of to make the code clean and reusable by the rest of the modules within the same platform,
 
 ```
 
-..collections/ansible*collections/{network_os}/{network_os}/plugins/module*
+..collections/ansible_collections/{network_os}/{network_os}/plugins/module_
 utils/network/{network_os}/utils/utils.py
 
 ```
@@ -357,7 +358,6 @@ wanted = { 'key1' : { 'key2' : 10 , }}
 
 ```
 
-A parser named Something will do the compare and push the whole dict for being processed in setvals. Whereas a parser named Something.Anything will do the comparison on a level under Something as per the above example.
+A parser named `Something` will do the compare and push the whole dict for being processed in setvals. Whereas a parser named Something.Anything will do the comparison on a level under Something as per the above example.
 
 Happy contribution!
-
