@@ -1,0 +1,79 @@
+# -*- coding: utf-8 -*-
+# {{ copyright }}
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
+from __future__ import absolute_import, division, print_function
+
+__metaclass__ = type
+
+DOCUMENTATION = """
+author: Ansible Networking Team
+cliconf: {{ network_os }}
+short_description: 
+description:
+version_added:
+options:
+"""
+
+import json
+import time
+import re
+
+from ansible.errors import AnsibleConnectionFailure
+from ansible.module_utils._text import to_text
+from ansible.module_utils.common._collections_compat import Mapping
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    to_list,
+)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.config import (
+    NetworkConfig,
+    dumps,
+)
+from ansible.plugins.cliconf import CliconfBase, enable_mode
+
+
+class Cliconf(CliconfBase):
+
+    def __init__(self, *args, **kwargs):
+        super(Cliconf, self).__init__(*args, **kwargs)
+
+    @enable_mode
+    def get_config(self, source="running", format="text", flags=None):
+	"""
+        This method fetches the running configuration 
+	from  device
+        :return: output of running config
+        """
+
+        pass
+
+    @enable_mode
+    def edit_config(
+        self, candidate=None, commit=True, replace=None, comment=None
+    ):
+	"""
+        This method executes the command and returns the response
+	from  the device
+        :return: response of the command execution
+        """
+
+        pass
+
+
+    def get_device_info(self):
+	"""
+        This method populates the device_info dict
+	with all the information like network_os,
+	network_os_version, network_os_model etc
+        :return: device_info
+        """
+
+        if not self._device_info:
+            device_info = {}
+
+            device_info["network_os"] = "{{ network_os }}"
+            # populate other data
+            self._device_info = device_info
+
+        return self._device_info
